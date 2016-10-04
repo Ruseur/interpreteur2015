@@ -56,7 +56,7 @@ Noeud* Interpreteur::seqInst() {
   NoeudSeqInst* sequence = new NoeudSeqInst();
   do {
     sequence->ajoute(inst());
-  } while (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "si");
+  } while (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "si" /*modif*/ || m_lecteur.getSymbole() == "sinonsi" );
   // Tant que le symbole courant est un début possible d'instruction...
   // Il faut compléter cette condition chaque fois qu'on rajoute une nouvelle instruction
   return sequence;
@@ -126,6 +126,7 @@ Noeud* Interpreteur::facteur() {
   return fact;
 }
 
+//rajouter le sinon si
 Noeud* Interpreteur::instSi() {
   // <instSi> ::= si ( <expression> ) <seqInst> finsi
   testerEtAvancer("si");
@@ -137,3 +138,40 @@ Noeud* Interpreteur::instSi() {
   return new NoeudInstSi(condition, sequence); // Et on renvoie un noeud Instruction Si
 }
 
+Noeud* Interpreteur::instTantQue(){
+    
+    testerEtAvancer("tantque");
+    testerEtAvancer("(");
+    Noeud* condition = expression(); // On mémorise la condition
+    testerEtAvancer(")");
+    
+    Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+    
+    tester("fintantque");
+    
+    //temporaire
+    return nullptr;
+}
+
+Noeud* Interpreteur::instRepeter(){
+    
+    testerEtAvancer("repeter");
+    
+    Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+    
+     testerEtAvancer("finpour");
+    //temporaire
+    return nullptr;
+}
+Noeud* Interpreteur::instPour(){
+    //temporaire
+    return nullptr;
+}
+Noeud* Interpreteur::Ecrire(){
+    //temporaire
+    return nullptr;
+}
+Noeud* Interpreteur::instLire(){
+    //temporaire
+    return nullptr;
+}
