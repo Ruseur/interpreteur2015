@@ -10,9 +10,6 @@
 
 NoeudSeqInst::NoeudSeqInst() : m_instructions() {
 }
-
-
-
 int NoeudSeqInst::executer() {
   for (unsigned int i = 0; i < m_instructions.size(); i++)
     m_instructions[i]->executer(); // on exécute chaque instruction de la séquence
