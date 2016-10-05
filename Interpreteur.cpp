@@ -167,7 +167,7 @@ Noeud* Interpreteur::instPour(){
     //temporaire
     return nullptr;
 }
-Noeud* Interpreteur::Ecrire(){
+Noeud* Interpreteur::instEcrire(){
     //temporaire
     return nullptr;
 }

@@ -36,11 +36,11 @@ private:
     Noeud*  instSi();      //      <instSi> ::= si ( <expression> ) <seqInst> finsi
     
     
-    Noeud* Interpreteur::instTantQue();
-    Noeud* Interpreteur::instRepeter();
-    Noeud* Interpreteur::instPour();
-    Noeud* Interpreteur::Ecrire();
-    Noeud* Interpreteur::instLire();
+    Noeud* instTantQue();
+    Noeud* instRepeter();
+    Noeud* instPour();
+    Noeud* instEcrire();
+    Noeud* instLire();
 
     // outils pour simplifier l'analyse syntaxique
     void tester (const string & symboleAttendu) const throw (SyntaxeException);   // Si symbole courant != symboleAttendu, on lève une exception
