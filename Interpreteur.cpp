@@ -147,7 +147,7 @@ Noeud* Interpreteur::instTantQue(){
     
     Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
     
-    tester("fintantque");
+    testerEtAvancer("fintantque");
     
     //temporaire
     return nullptr;
@@ -159,19 +159,81 @@ Noeud* Interpreteur::instRepeter(){
     
     Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
     
-     testerEtAvancer("finpour");
+    testerEtAvancer("finpour");
     //temporaire
     return nullptr;
 }
+
+
 Noeud* Interpreteur::instPour(){
+    
+    testerEtAvancer("pour");
+    testerEtAvancer("(");
+    //verifier si affectation 
+    if(m_lecteur.getSymbole()=="<VARIABLE>"){
+        Noeud* affect = affectation();
+        m_lecteur.avancer();//avancer?
+        
+    }
+    testerEtAvancer(";");// 3 parties  delimitées par " ; " meme si premiere vide
+   
+    Noeud* condition = expression(); //analyse de la condition
+    
+    testerEtAvancer(";");
+    //verifier si affectation
+    if(m_lecteur.getSymbole()=="<VARIABLE>"){
+        Noeud* aff = affectation();
+        m_lecteur.avancer();
+    }
+    testerEtAvancer(")");
+    
+    Noeud* sequence = seqInst(); //analyse de la sequence d'instruction du pour
+    testerEtAvancer("finpour");
     //temporaire
     return nullptr;
 }
 Noeud* Interpreteur::instEcrire(){
+    testerEtAvancer("ecrire");
+    testerEtAvancer("(");
+    
+    if(m_lecteur.getSymbole() == "<CHAINE>"){
+
+        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
+        m_lecteur.avancer();
+        }
+        else{ //si ce n'est pas une chaine c'est forcement une expression
+            Noeud* expressi = expression();
+        }
+
+    while(m_lecteur.getSymbole() != ")"){
+        
+        testerEtAvancer(",");
+        if(m_lecteur.getSymbole() == "<CHAINE>"){
+
+        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
+        m_lecteur.avancer();
+        }
+        else{ //si c'est autre chose qu'une chaine ou une expression une exception sera levée
+            Noeud* expressio = expression();
+        }
+   
+    }
+    testerEtAvancer(")");    
     //temporaire
     return nullptr;
 }
 Noeud* Interpreteur::instLire(){
+    testerEtAvancer("lire");
+    testerEtAvancer("(");
+    
+    do{
+        tester("<VARIABLE>");
+        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
+        m_lecteur.avancer();
+        testerEtAvancer(",");
+        
+    }while(m_lecteur.getSymbole() != ")");
+    testerEtAvancer(")");
     //temporaire
     return nullptr;
 }
