@@ -95,3 +95,85 @@ int NoeudInstTantQue::executer() {
 	}
   return 0; // La valeur renvoyée ne représente rien !
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstRepeter
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstRepeter::NoeudInstRepeter(Noeud* condition, Noeud* sequence)
+: m_condition(condition), m_sequence(sequence) {
+}
+
+int NoeudInstRepeter::executer() {
+	do {
+		m_sequence->executer();
+	}
+	while(m_condition->executer());
+	
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstPour
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstPour::NoeudInstPour(Noeud* affectation1, Noeud* condition, Noeud* affectation2, Noeud* sequence)
+: m_affectation1(affectation1), m_condition(condition),m_affectation2(affectation2), m_sequence(sequence) {
+}
+
+int NoeudInstPour::executer() {
+	for(m_affectation1->executer(); m_condition->executer(); m_affectation2->executer() ) {
+
+			m_sequence->executer();
+	}
+	
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstEcrire
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstEcrire::NoeudInstEcrire() {
+}
+
+int NoeudInstEcrire::executer() {
+
+	for(Noeud* temp : m_expressions) {
+		cout << temp->executer();
+	}
+	
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstEcrire::ajoute(Noeud* expression) {
+  if (expression!=nullptr) m_expressions.push_back(expression);
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstLire
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstLire::NoeudInstLire() {
+}
+
+int NoeudInstLire::executer() {
+
+	for(Noeud* temp : m_variables) {
+		int temp2;
+		cin >> temp2;
+
+		((SymboleValue*) temp)->setValeur(temp2);
+	}
+	
+  return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstLire::ajoute(Noeud* variable) {
+  if (variable!=nullptr) m_variables.push_back(variable);
+}
+

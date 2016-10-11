@@ -97,8 +97,67 @@ class NoeudInstTantQue : public Noeud {
     Noeud*  m_sequence;
 };
 
+////////////////////////////  Blow  ////////////////////////////////////////////////////
+class NoeudInstRepeter : public Noeud {
+// Classe pour représenter un noeud "instruction Repeter"
+//  et ses 2 fils : la condition du Repeter et la séquence d'instruction associée
+  public:
+    NoeudInstRepeter(Noeud* condition, Noeud* sequence);
+     // Construit une "instruction Repeter" avec sa condition et sa séquence d'instruction
+   ~NoeudInstRepeter() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction Repeter : Repeter condition vraie on exécute la séquence
+
+  private:
+    Noeud*  m_condition;
+    Noeud*  m_sequence;
+};
+
+////////////////////////////  Blow  ////////////////////////////////////////////////////
+class NoeudInstPour : public Noeud {
+// Classe pour représenter un noeud "instruction Pour "
+//  et ses 4 fils : l'affectation, expression, affectation et sa séquence d'instruction associée
+  public:
+    NoeudInstPour(Noeud* affectation1, Noeud* condition, Noeud* affectation2, Noeud* sequence);
+     // Construit une "instruction Pour" avec ses affectations et expression et sa séquence d'instruction
+   ~NoeudInstPour() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction Pour : Pour (affectation, expression, affectation) { sequence d'instructions
+
+  private:
+    Noeud*  m_affectation1;
+    Noeud*  m_affectation2;
+    Noeud*  m_condition;
+    Noeud*  m_sequence;
+};
 
 
+////////////////////////////  Blow  ////////////////////////////////////////////////////
+class NoeudInstEcrire : public Noeud {
+// Classe pour représenter un noeud "instruction Ecrire "
+//  et son fils : un tableau d'expression à écrire
+  public:
+    NoeudInstEcrire(); // Construit une "instruction Ecrire" avec son tableau d'expressions/chaines
+   ~NoeudInstEcrire() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction écrire : écrit la expressions/chaines
+    void ajoute(Noeud* expression);  // Ajoute une expression/chaine à la séquence
+
+  private:
+    vector<Noeud *> m_expressions; // pour stocker les expressions/chaines à écrire
+};
+
+
+////////////////////////////  Blow  ////////////////////////////////////////////////////
+class NoeudInstLire : public Noeud {
+// Classe pour représenter un noeud "instruction Lire "
+//  et son fils : un tableau de variable dont on doit lire les valeurs et leurs affecter
+  public:
+    NoeudInstLire(); // Construit une "instruction Lire" avec son tableau de variables
+   ~NoeudInstLire() {} // A cause du destructeur virtuel de la classe Noeud
+    int executer();  // Exécute l'instruction lire : lire les valeurs et les affectes aux variables associées
+    void ajoute(Noeud* variable);  // Ajoute une variable à la séquence
+
+  private:
+    vector<Noeud *> m_variables; // pour stocker les variables à lire
+};
 
 
 
