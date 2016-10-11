@@ -152,7 +152,7 @@ Noeud* Interpreteur::instSi() {
 }
 
 Noeud* Interpreteur::instTantQue(){
-    
+   // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque 
     testerEtAvancer("tantque");
     testerEtAvancer("(");
     Noeud* condition = expression(); // On mémorise la condition

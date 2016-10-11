@@ -62,11 +62,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/m3105-tp5
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/interpreteur2016
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/m3105-tp5: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/interpreteur2016: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/m3105-tp5 ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/interpreteur2016 ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/ArbreAbstrait.o: ArbreAbstrait.cpp 
 	${MKDIR} -p ${OBJECTDIR}
@@ -109,7 +109,7 @@ ${OBJECTDIR}/main.o: main.cpp
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/m3105-tp5
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/interpreteur2016
 
 # Subprojects
 .clean-subprojects:
