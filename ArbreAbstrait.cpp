@@ -90,7 +90,7 @@ NoeudInstTantQue::NoeudInstTantQue(Noeud* condition, Noeud* sequence)
 }
 
 int NoeudInstTantQue::executer() {
-	while(m_condition->executer) {
+	while(m_condition->executer()) {
 		m_sequence->executer();
 	}
   return 0; // La valeur renvoyée ne représente rien !
