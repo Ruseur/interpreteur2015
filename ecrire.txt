@@ -1,0 +1,8 @@
+# Fichier de test du ecrire
+# Les lignes de commentaires commencent par #
+procedure principale()
+
+ecrire(oui,car,2,45, "i =")
+
+finproc
+# Commentaire Final

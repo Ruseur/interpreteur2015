@@ -1,0 +1,9 @@
+# Fichier de test du pour
+# Les lignes de commentaires commencent par #
+procedure principale()
+
+pour(oui;i < 2; )
+i = 1;
+finpour
+finproc
+# Commentaire Final

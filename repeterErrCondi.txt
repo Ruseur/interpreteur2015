@@ -1,0 +1,10 @@
+# Fichier de test du repeter
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12+3;
+repeter
+  i = 12;
+jusqua
+    j=1;
+finproc
+# Commentaire Final

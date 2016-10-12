@@ -1,0 +1,8 @@
+# Fichier de test du tantque
+# Les lignes de commentaires commencent par #
+procedure principale()
+  i = 12+3;
+tantque(j < 12)
+    j=1;
+finproc
+# Commentaire Final

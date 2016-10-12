@@ -1,0 +1,8 @@
+# Fichier de test du lire
+# Les lignes de commentaires commencent par #
+procedure principale()
+
+lire(oui,car,ooui,gjgj)
+
+finproc
+# Commentaire Final

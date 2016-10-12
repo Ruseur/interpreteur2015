@@ -4,7 +4,7 @@
 using namespace std;
 
 Interpreteur::Interpreteur(ifstream & fichier) :
-m_lecteur(fichier), m_table(), m_arbre(nullptr) {
+m_lecteur(fichier), m_table(), m_arbre(nullptr),m_nb_erreur(0) {
 }
 
 void Interpreteur::analyse() {
@@ -41,13 +41,59 @@ void Interpreteur::erreur(const string & message) const throw (SyntaxeException)
 
 Noeud* Interpreteur::programme() {
   // <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
-  testerEtAvancer("procedure");
-  testerEtAvancer("principale");
-  testerEtAvancer("(");
-  testerEtAvancer(")");
-  Noeud* sequence = seqInst();
-  testerEtAvancer("finproc");
-  tester("<FINDEFICHIER>");
+  Noeud* sequence = nullptr; //la déclaration de sequence n'est plus visible en dehors des blocs try-catch
+  try{
+    testerEtAvancer("procedure");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  try{
+    testerEtAvancer("principale");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  try{
+    testerEtAvancer("(");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  try{
+    testerEtAvancer(")");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  try{
+    sequence = seqInst();
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  try{
+    testerEtAvancer("finproc");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  try{
+    tester("<FINDEFICHIER>");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }  
+  if (m_nb_erreur>0) {
+    sequence = nullptr;
+  }
   return sequence;
 }
 
@@ -67,6 +113,7 @@ Noeud* Interpreteur::seqInst() {
 
 Noeud* Interpreteur::inst() {
   // <inst> ::= <affectation>  ; | <instSi>
+  try{  
   if (m_lecteur.getSymbole() == "<VARIABLE>") {
     Noeud *affect = affectation();
     testerEtAvancer(";");
@@ -84,24 +131,71 @@ Noeud* Interpreteur::inst() {
     return instEcrire();
   else if(m_lecteur.getSymbole() == "lire")
       return instLire();
+ 
   // Compléter les alternatives chaque fois qu'on rajoute une nouvelle instruction
   else erreur("Instruction incorrecte");
+  }
+  catch(SyntaxeException e){ //triage "gros grain"
+      cout << e.what() << endl;
+      m_lecteur.avancer();
+  }
 }
 
-Noeud* Interpreteur::affectation() {
-  // <affectation> ::= <variable> = <expression> 
-  tester("<VARIABLE>");
-  Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table eton la mémorise
+Noeud* Interpreteur::affectation(){
+  // <affectation> ::= <variable> = <expression>
+  Noeud* exp; 
+  Noeud* var;
+  try{
+    tester("<VARIABLE>");
+  }catch(SyntaxeException e){
+    
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }  
+  try{
+    var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table eton la mémorise
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    /*m_lecteur.avancer(); faut il avancer alors qu'on avance deja apres? <---------------------------------------------------------- /!\*/
+  }  
   m_lecteur.avancer();
-  testerEtAvancer("=");
-  Noeud* exp = expression();             // On mémorise l'expression trouvée
-  return new NoeudAffectation(var, exp); // On renvoie un noeud affectation
+  try{
+    testerEtAvancer("=");
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }  
+  try{
+    exp = expression();             // On mémorise l'expression trouvée
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }  
+  Noeud* noeudaffec = new NoeudAffectation(var, exp); // On renvoie un noeud affectation
+  
+  //assurance de ne pas renvoyer un noeud incomplet
+  if(m_nb_erreur > 0){
+      noeudaffec = nullptr;
+  }
+  return noeudaffec;
 }
 
 Noeud* Interpreteur::expression() {
   // <expression> ::= <facteur> { <opBinaire> <facteur> }
   //  <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
-  Noeud* fact = facteur();
+  Noeud* fact;
+  try{
+    fact = facteur();
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }  
+  try{
   while ( m_lecteur.getSymbole() == "+"  || m_lecteur.getSymbole() == "-"  ||
           m_lecteur.getSymbole() == "*"  || m_lecteur.getSymbole() == "/"  ||
           m_lecteur.getSymbole() == "<"  || m_lecteur.getSymbole() == "<=" ||
@@ -112,6 +206,15 @@ Noeud* Interpreteur::expression() {
     m_lecteur.avancer();
     Noeud* factDroit = facteur(); // On mémorise l'opérande droit
     fact = new NoeudOperateurBinaire(operateur, fact, factDroit); // Et on construuit un noeud opérateur binaire
+  }
+  }catch(SyntaxeException e){
+    m_nb_erreur++;
+    cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+    m_lecteur.avancer();
+  }
+  //assurance de ne pas renvoyer de noeud incomplet
+  if(m_nb_erreur > 0){
+      fact = nullptr;
   }
   return fact; // On renvoie fact qui pointe sur la racine de l'expression
 }
@@ -147,6 +250,17 @@ Noeud* Interpreteur::instSi() {
   Noeud* condition = expression(); // On mémorise la condition
   testerEtAvancer(")");
   Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+  
+  while(m_lecteur.getSymbole() == "sinon si"){
+      m_lecteur.avancer();
+      Noeud* seque = seqInst();
+  }
+  
+  if(m_lecteur.getSymbole() == "sinon"){
+      m_lecteur.avancer();
+      Noeud* seq = seqInst();
+  }
+  
   testerEtAvancer("finsi");
   return new NoeudInstSi(condition, sequence); // Et on renvoie un noeud Instruction Si
 }
