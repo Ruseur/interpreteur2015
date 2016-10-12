@@ -172,7 +172,10 @@ Noeud* Interpreteur::instRepeter(){
     
     Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
     
-    testerEtAvancer("finpour");
+    testerEtAvancer("jusqua");
+    testerEtAvancer("(");
+    Noeud* expressio = expression();
+    testerEtAvancer(")");
     //temporaire
     return nullptr;
 }
@@ -185,7 +188,7 @@ Noeud* Interpreteur::instPour(){
     //verifier si affectation 
     if(m_lecteur.getSymbole()=="<VARIABLE>"){
         Noeud* affect = affectation();
-        m_lecteur.avancer();//avancer?
+
         
     }
     testerEtAvancer(";");// 3 parties  delimitées par " ; " meme si premiere vide
@@ -196,7 +199,7 @@ Noeud* Interpreteur::instPour(){
     //verifier si affectation
     if(m_lecteur.getSymbole()=="<VARIABLE>"){
         Noeud* aff = affectation();
-        m_lecteur.avancer();
+
     }
     testerEtAvancer(")");
     
@@ -218,9 +221,9 @@ Noeud* Interpreteur::instEcrire(){
             Noeud* expressi = expression();
         }
 
-    while(m_lecteur.getSymbole() != ")"){
+    while(m_lecteur.getSymbole() == ","){
         
-        testerEtAvancer(",");
+        m_lecteur.avancer();
         if(m_lecteur.getSymbole() == "<CHAINE>"){
 
         Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
@@ -239,13 +242,22 @@ Noeud* Interpreteur::instLire(){
     testerEtAvancer("lire");
     testerEtAvancer("(");
     
-    do{
-        tester("<VARIABLE>");
+    if (m_lecteur.getSymbole() == "<VARIABLE>") {
+        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // on ajoute la variable à la table
+        m_lecteur.avancer();
+    }
+    
+    while(m_lecteur.getSymbole() == ","){
+        m_lecteur.avancer();
+        
+        if(m_lecteur.getSymbole() == "<VARIABLE>"){
         Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
         m_lecteur.avancer();
-        testerEtAvancer(",");
+        cout << m_lecteur.getSymbole();
+        }
+
         
-    }while(m_lecteur.getSymbole() != ")");
+    }
     testerEtAvancer(")");
     //temporaire
     return nullptr;
