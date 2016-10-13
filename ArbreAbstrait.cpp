@@ -109,6 +109,7 @@ NoeudInstTantQue::NoeudInstTantQue(Noeud* condition, Noeud* sequence)
 }
 
 int NoeudInstTantQue::executer() {
+	cout << "executage tantque" << endl;
 	while(m_condition->executer()) {
 		m_sequence->executer();
 	}
@@ -124,8 +125,10 @@ NoeudInstRepeter::NoeudInstRepeter(Noeud* condition, Noeud* sequence)
 }
 
 int NoeudInstRepeter::executer() {
+	cout << "executage repeter" << endl;
 	do {
 		m_sequence->executer();
+		cout << "coucou" << endl;
 	}
 	while(m_condition->executer());
 	
@@ -142,10 +145,29 @@ NoeudInstPour::NoeudInstPour(Noeud* affectation1, Noeud* condition, Noeud* affec
 }
 
 int NoeudInstPour::executer() {
-	for(m_affectation1->executer(); m_condition->executer(); m_affectation2->executer() ) {
-
+	cout << "executage pour" << endl;
+	
+	if(m_affectation1 == nullptr && m_affectation2 == nullptr) {
+		for( ; m_condition->executer(); ) {
 			m_sequence->executer();
+		}
 	}
+	else if(m_affectation1 == nullptr) {
+		for( ; m_condition->executer(); m_affectation2->executer() ) {
+			m_sequence->executer();
+		}
+	}
+	else if(m_affectation2 == nullptr) {
+		for(m_affectation1->executer(); m_condition->executer(); ) {
+			m_sequence->executer();
+		}
+	}
+	else {
+		for(m_affectation1->executer(); m_condition->executer(); m_affectation2->executer()) {
+			m_sequence->executer();
+		}
+	}
+	
 	
   return 0; // La valeur renvoyée ne représente rien !
 }
@@ -159,7 +181,7 @@ NoeudInstEcrire::NoeudInstEcrire() {
 }
 
 int NoeudInstEcrire::executer() {
-
+	cout << "executage ecrire" << endl;
 	for(Noeud* temp : m_expressions) {
 		cout << temp->executer();
 	}
@@ -181,7 +203,7 @@ NoeudInstLire::NoeudInstLire() {
 }
 
 int NoeudInstLire::executer() {
-
+	cout << "executage lire" << endl;
 	for(Noeud* temp : m_variables) {
 		int temp2;
 		cin >> temp2;

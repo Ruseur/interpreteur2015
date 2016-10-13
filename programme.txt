@@ -1,13 +1,11 @@
 # Fichier de test
 # Les lignes de commentaires commencent par #
 procedure principale()
-  i = 15;
-  si (i>16)
-    j=1;
-  sinonsi(i>50)
-  	j = 14;
-
-  finsi
+	j=0;
+	pour( i=0; i<5; i=i+1)
+		j = j+1;
+	finpour
+	
 finproc
 
 

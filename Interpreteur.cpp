@@ -367,7 +367,8 @@ Noeud* Interpreteur::instSi() {
 
 Noeud* Interpreteur::instTantQue(){
    // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque 
-    
+    Noeud* condition;
+		Noeud* sequence;
     try{
 			cout << "tantQue" << endl;
       testerEtAvancer("tantque");
@@ -384,7 +385,7 @@ Noeud* Interpreteur::instTantQue(){
         m_lecteur.avancer();
     }
     try{
-        Noeud* condition = expression(); // On mémorise la condition
+        condition = expression(); // On mémorise la condition
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -399,7 +400,7 @@ Noeud* Interpreteur::instTantQue(){
     }
     
     try{
-        Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+        sequence = seqInst();     // On mémorise la séquence d'instruction
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -414,14 +415,23 @@ Noeud* Interpreteur::instTantQue(){
         m_lecteur.avancer();
     }
     
-    //temporaire
-    return nullptr;
+  // On crée le noeudsi en envoyant la condition et la sequence d'instruction
+  Noeud* noeudtq = new NoeudInstTantQue(condition, sequence);
+  //assurance de ne pas envoyer un noeud incomplet
+  if(m_nb_erreur > 0){
+      noeudtq = nullptr;
+  }
+
+  return noeudtq; // Et on renvoie un noeud Instruction Tantque
 }
 
 Noeud* Interpreteur::instRepeter(){
+	Noeud* condition;
+	Noeud* sequence;
     
     try{
-    testerEtAvancer("repeter");
+			cout << "repeter"<< endl;
+			testerEtAvancer("repeter");
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -429,7 +439,7 @@ Noeud* Interpreteur::instRepeter(){
     }
     
     try{
-    Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+			sequence = seqInst();     // On mémorise la séquence d'instruction
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -450,7 +460,7 @@ Noeud* Interpreteur::instRepeter(){
         m_lecteur.avancer();
     }
     try{
-        Noeud* expressio = expression();
+        condition = expression();
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -463,15 +473,27 @@ Noeud* Interpreteur::instRepeter(){
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
         m_lecteur.avancer();
     }
-    //temporaire
-    return nullptr;
+		
+  // On crée le noeudrepeter en envoyant la condition et la sequence d'instruction
+  Noeud* noeudrep = new NoeudInstRepeter(condition, sequence);
+  //assurance de ne pas envoyer un noeud incomplet
+  if(m_nb_erreur > 0){
+      noeudrep = nullptr;
+  }
+
+  return noeudrep; // Et on renvoie un noeud Instruction Repeter
 }
 
 
 Noeud* Interpreteur::instPour(){
+	Noeud* affectation1;
+	Noeud* condition;
+	Noeud* affectation2;
+	Noeud* sequence;
     
     try{
-        testerEtAvancer("pour");
+			cout << "pour" << endl;	
+      testerEtAvancer("pour");
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -486,11 +508,11 @@ Noeud* Interpreteur::instPour(){
     }
     //verifier si affectation 
     try{
-    if(m_lecteur.getSymbole()=="<VARIABLE>"){
-        Noeud* affect = affectation();
-
-        
-    }
+			if(m_lecteur.getSymbole()=="<VARIABLE>"){
+				affectation1 = affectation();
+			}else{
+				affectation1 = nullptr;
+			}
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -504,7 +526,7 @@ Noeud* Interpreteur::instPour(){
         m_lecteur.avancer();
     }
     try{
-    Noeud* condition = expression(); //analyse de la condition
+			condition = expression(); //analyse de la condition
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -519,10 +541,11 @@ Noeud* Interpreteur::instPour(){
     }
     //verifier si affectation
     try{
-    if(m_lecteur.getSymbole()=="<VARIABLE>"){
-        Noeud* aff = affectation();
-
-    }
+			if(m_lecteur.getSymbole()=="<VARIABLE>"){
+				affectation2 = affectation();
+			}else{
+				affectation2 = nullptr;
+			}
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -536,7 +559,7 @@ Noeud* Interpreteur::instPour(){
         m_lecteur.avancer();
     }
     try{
-    Noeud* sequence = seqInst(); //analyse de la sequence d'instruction du pour
+			sequence = seqInst(); //analyse de la sequence d'instruction du pour
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -549,8 +572,15 @@ Noeud* Interpreteur::instPour(){
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
         m_lecteur.avancer();
     }
-    //temporaire
-    return nullptr;
+		
+    // On crée le noeudrepeter en envoyant les conditions, l'affectation et la sequence d'instruction
+			Noeud* noeudPour = new NoeudInstPour(affectation1, condition, affectation2, sequence);
+		//assurance de ne pas envoyer un noeud incomplet
+			if(m_nb_erreur > 0){
+				noeudPour = nullptr;
+			}
+
+  return noeudPour; // Et on renvoie un noeud Instruction Pour
 }
 Noeud* Interpreteur::instEcrire(){
     try{
