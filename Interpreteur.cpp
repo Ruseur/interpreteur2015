@@ -1,6 +1,7 @@
 #include "Interpreteur.h"
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 using namespace std;
 
 Interpreteur::Interpreteur(ifstream & fichier) :
@@ -258,8 +259,9 @@ Noeud* Interpreteur::facteur() {
 //rajouter le sinon si
 Noeud* Interpreteur::instSi() {
   // <instSi> ::= si ( <expression> ) <seqInst> finsi
-  Noeud* condition;
-  Noeud* sequence;
+	
+  vector<Noeud*> vectorConditions; //Tableaux de tous les noeuds de type "conditions"
+  vector<Noeud*> vectorSequences; //Tableaux de tous les noeuds de type "Sequences d'instructions"
 	
   try{
 		cout << "si" << endl;
@@ -277,7 +279,7 @@ Noeud* Interpreteur::instSi() {
     m_lecteur.avancer();
   }
   try{
-    condition = expression(); // On mémorise la condition
+    vectorConditions.push_back(expression()); // On mémorise la condition de base
   }catch(SyntaxeException & e){
     m_nb_erreur++;
     cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -291,7 +293,7 @@ Noeud* Interpreteur::instSi() {
     m_lecteur.avancer();
   }
   try{
-    sequence = seqInst();     // On mémorise la séquence d'instruction
+    vectorSequences.push_back(seqInst());     // On mémorise la séquence d'instruction associée
   }catch(SyntaxeException & e){
     m_nb_erreur++;
     cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -299,9 +301,33 @@ Noeud* Interpreteur::instSi() {
   }
   
   try{
-    while(m_lecteur.getSymbole() == "sinon si"){
+		cout << "sinonsi" << endl;
+    while(m_lecteur.getSymbole() == "sinonsi"){ //en cas de présence de sinonsi, et tant qu'il y aura des sinonsi, on boucle
          m_lecteur.avancer();
-         Noeud* seque = seqInst(); //rajouter un tableau au noeud instsi
+				 
+					try{
+						testerEtAvancer("(");
+					}catch(SyntaxeException & e){
+						m_nb_erreur++;
+						cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+						m_lecteur.avancer();
+					}
+					try{
+						vectorConditions.push_back(expression()); // On mémorise la condition associée a ce sinonsi
+					}catch(SyntaxeException & e){
+						m_nb_erreur++;
+						cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+						m_lecteur.avancer();
+					}
+					try{
+						testerEtAvancer(")");
+					}catch(SyntaxeException & e){
+						m_nb_erreur++;
+						cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
+						m_lecteur.avancer();
+					}
+				 
+         vectorSequences.push_back(seqInst()); // On mémorise la séquence associée a ce sinon si
     }
   }catch(SyntaxeException & e){
     m_nb_erreur++;
@@ -310,9 +336,10 @@ Noeud* Interpreteur::instSi() {
   }
   
   try{
+	cout << "sinon" << endl;
   if(m_lecteur.getSymbole() == "sinon"){
       m_lecteur.avancer();
-      Noeud* seq = seqInst();
+      vectorSequences.push_back(seqInst()); // On mémorise la séquence seul représentant le "sinon"
   }
   }catch(SyntaxeException & e){
     m_nb_erreur++;
@@ -327,7 +354,9 @@ Noeud* Interpreteur::instSi() {
     cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
     m_lecteur.avancer();
   }
-  Noeud* noeudsi = new NoeudInstSi(condition, sequence);
+	
+	// On crée le noeudsi en envoyant nos 2 tableaux de conditions/séquences.
+  Noeud* noeudsi = new NoeudInstSi(vectorConditions, vectorSequences);
   //assurance de ne pas envoyer un noeud incomplet
   if(m_nb_erreur > 0){
       noeudsi = nullptr;

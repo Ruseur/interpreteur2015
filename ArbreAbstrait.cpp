@@ -73,13 +73,28 @@ int NoeudOperateurBinaire::executer() {
 // NoeudInstSi
 ////////////////////////////////////////////////////////////////////////////////
 
-NoeudInstSi::NoeudInstSi(Noeud* condition, Noeud* sequence)
-: m_condition(condition), m_sequence(sequence) {
+NoeudInstSi::NoeudInstSi(vector<Noeud*> conditions, vector<Noeud*> sequences)
+: m_condition(conditions), m_sequence(sequences) {
 }
 
 int NoeudInstSi::executer() {
 	cout << "executage si" << endl;
-  if (m_condition->executer()) m_sequence->executer();
+	
+	int i=0; // indice pour déterminer quel séquence executer
+	bool termine = false; //afin de sortir de la loop en cas de conditions TRUE
+	
+	// On loop tant qu'il reste des conditions non TRUE
+	while(termine == false && i< m_condition.size()) {
+		if(m_condition[i]->executer()) { //On teste la condition de l'indice i
+			termine = true;
+			i = i-1; //Je réduis l'indice de 1 si la condition est bonne afin d'executer la séquence associée à ce sinon si
+		}
+		i++;
+	}
+	if(i<m_sequence.size()) { // Je vérifie si, même si aucune condition n'est respectée, il reste une séquence qui est le "sinon"
+		m_sequence[i]->executer();
+	}
+	
   return 0; // La valeur renvoyée ne représente rien !
 }
 
