@@ -5,13 +5,6 @@ procedure principale()
   si (i>14)
     j=1;
   finsi
-
-# Commentaire Final
-
-i = 0;
-
-tantque(i<10)
-	i = i+1;
-fintantque
-
 finproc
+
+

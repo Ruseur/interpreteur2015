@@ -43,6 +43,7 @@ Noeud* Interpreteur::programme() {
   // <programme> ::= procedure principale() <seqInst> finproc FIN_FICHIER
   Noeud* sequence = nullptr; //la déclaration de sequence n'est plus visible en dehors des blocs try-catch
   try{
+		cout << "Principal"<< endl;
     testerEtAvancer("procedure");
   }catch(SyntaxeException & e){
     m_nb_erreur++;
@@ -94,6 +95,7 @@ Noeud* Interpreteur::programme() {
   if (m_nb_erreur>0) {
     sequence = nullptr;
   }
+	
   return sequence;
 }
 
@@ -101,6 +103,7 @@ Noeud* Interpreteur::seqInst() {
   // <seqInst> ::= <inst> { <inst> }
   NoeudSeqInst* sequence = new NoeudSeqInst();
   do {
+		cout << "Sequence"<< endl;
     sequence->ajoute(inst());
   } while (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "si" /*modif*/ 
           || m_lecteur.getSymbole() == "tantque" || m_lecteur.getSymbole() == "repeter"
@@ -113,7 +116,8 @@ Noeud* Interpreteur::seqInst() {
 
 Noeud* Interpreteur::inst() {
   // <inst> ::= <affectation>  ; | <instSi>
-  try{  
+  try{
+		cout << "Instruction"<< endl;
   if (m_lecteur.getSymbole() == "<VARIABLE>") {
     Noeud *affect = affectation();
     testerEtAvancer(";");
@@ -146,6 +150,7 @@ Noeud* Interpreteur::affectation(){
   Noeud* exp; 
   Noeud* var;
   try{
+		cout << "Affectation"<< endl;
     tester("<VARIABLE>");
   }catch(SyntaxeException & e){
     
@@ -189,6 +194,7 @@ Noeud* Interpreteur::expression() {
   //  <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
   Noeud* fact;
   try{
+		cout << "Expression"<< endl;
     fact = facteur();
   }catch(SyntaxeException & e){
     m_nb_erreur++;
@@ -222,6 +228,7 @@ Noeud* Interpreteur::expression() {
 Noeud* Interpreteur::facteur() {
   // <facteur> ::= <entier> | <variable> | - <facteur> | non <facteur> | ( <expression> )
   Noeud* fact = nullptr;
+	cout << "facteur"<< endl;
   if (m_lecteur.getSymbole() == "<VARIABLE>" || m_lecteur.getSymbole() == "<ENTIER>") {
     fact = m_table.chercheAjoute(m_lecteur.getSymbole()); // on ajoute la variable ou l'entier à la table
     m_lecteur.avancer();
@@ -253,7 +260,9 @@ Noeud* Interpreteur::instSi() {
   // <instSi> ::= si ( <expression> ) <seqInst> finsi
   Noeud* condition;
   Noeud* sequence;
+	
   try{
+		cout << "si" << endl;
     testerEtAvancer("si");
   }catch(SyntaxeException & e){
     m_nb_erreur++;
@@ -282,7 +291,7 @@ Noeud* Interpreteur::instSi() {
     m_lecteur.avancer();
   }
   try{
-    Noeud* sequence = seqInst();     // On mémorise la séquence d'instruction
+    sequence = seqInst();     // On mémorise la séquence d'instruction
   }catch(SyntaxeException & e){
     m_nb_erreur++;
     cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -323,7 +332,7 @@ Noeud* Interpreteur::instSi() {
   if(m_nb_erreur > 0){
       noeudsi = nullptr;
   }
-  
+
   return noeudsi; // Et on renvoie un noeud Instruction Si
 }
 
@@ -331,7 +340,8 @@ Noeud* Interpreteur::instTantQue(){
    // <instTantQue> ::= tantque ( <expression> ) <seqInst> fintantque 
     
     try{
-        testerEtAvancer("tantque");
+			cout << "tantQue" << endl;
+      testerEtAvancer("tantque");
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;

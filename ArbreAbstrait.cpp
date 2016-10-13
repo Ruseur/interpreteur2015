@@ -11,6 +11,7 @@
 NoeudSeqInst::NoeudSeqInst() : m_instructions() {
 }
 int NoeudSeqInst::executer() {
+	cout << "executage sequence" << endl;
   for (unsigned int i = 0; i < m_instructions.size(); i++)
     m_instructions[i]->executer(); // on exécute chaque instruction de la séquence
   return 0; // La valeur renvoyée ne représente rien !
@@ -29,6 +30,7 @@ NoeudAffectation::NoeudAffectation(Noeud* variable, Noeud* expression)
 }
 
 int NoeudAffectation::executer() {
+	cout << "executage affectation" << endl;
   int valeur = m_expression->executer(); // On exécute (évalue) l'expression
   ((SymboleValue*) m_variable)->setValeur(valeur); // On affecte la variable
   return 0; // La valeur renvoyée ne représente rien !
@@ -43,6 +45,7 @@ NoeudOperateurBinaire::NoeudOperateurBinaire(Symbole operateur, Noeud* operandeG
 }
 
 int NoeudOperateurBinaire::executer() {
+	cout << "executage operateur binaire" << endl;
   int og, od, valeur;
   if (m_operandeGauche != nullptr) og = m_operandeGauche->executer(); // On évalue l'opérande gauche
   if (m_operandeDroit != nullptr) od = m_operandeDroit->executer(); // On évalue l'opérande droit
@@ -75,6 +78,7 @@ NoeudInstSi::NoeudInstSi(Noeud* condition, Noeud* sequence)
 }
 
 int NoeudInstSi::executer() {
+	cout << "executage si" << endl;
   if (m_condition->executer()) m_sequence->executer();
   return 0; // La valeur renvoyée ne représente rien !
 }
