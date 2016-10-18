@@ -14,8 +14,10 @@ public:
                                       
 	void analyse();                     // Si le contenu du fichier est conforme à la grammaire,
 	                                    //   cette méthode se termine normalement et affiche un message "Syntaxe correcte".
-                                      //   la table des symboles (ts) et l'arbre abstrait (arbre) auront été construits
+                                            //   la table des symboles (ts) et l'arbre abstrait (arbre) auront été construits
 	                                    // Sinon, une exception sera levée
+        
+        void traduitEnCPP(ostream & cout, unsigned int indentation) const; // écrit la base du programme en c++ puis lance la traduction de l'arbre
 
 	inline const TableSymboles & getTable () const  { return m_table;    } // accesseur	
 	inline Noeud* getArbre () const { return m_arbre; }                    // accesseur

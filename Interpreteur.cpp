@@ -583,8 +583,13 @@ Noeud* Interpreteur::instPour(){
   return noeudPour; // Et on renvoie un noeud Instruction Pour
 }
 Noeud* Interpreteur::instEcrire(){
+	
+	// On crée le noeudEcrire, que l'on va remplir à l'aide de la fonction "ajoute"
+		Noeud* noeudEcrire = new NoeudInstEcrire();
+					
     try{
-    testerEtAvancer("ecrire");
+			cout << "ecrire" << endl;
+			testerEtAvancer("ecrire");
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -600,11 +605,16 @@ Noeud* Interpreteur::instEcrire(){
     
     try{
     if(m_lecteur.getSymbole() == "<CHAINE>"){
-        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
+				cout << "chaine";
+				Noeud* var;
+        var = ( m_table.chercheAjoute(m_lecteur.getSymbole()) ); // La variable est ajoutée à la table et on la mémorise
+				noeudEcrire->ajoute(var);
+				
         m_lecteur.avancer();
     }
     else{ //si ce n'est pas une chaine c'est forcement une expression
-        Noeud* expressi = expression();
+				cout << "expression";
+        noeudEcrire->ajoute(expression());
     }
     }catch(SyntaxeException & e){
         m_nb_erreur++;
@@ -616,12 +626,14 @@ Noeud* Interpreteur::instEcrire(){
         
         m_lecteur.avancer();
         if(m_lecteur.getSymbole() == "<CHAINE>"){
+					cout << "chaine";
 
-        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
-        m_lecteur.avancer();
+					noeudEcrire->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()));  // La variable est ajoutée à la table et on la mémorise
+					m_lecteur.avancer();
         }
         else{ //si c'est autre chose qu'une chaine ou une expression une exception sera levée
-            Noeud* expressio = expression();
+						cout << "expression";
+					  noeudEcrire->ajoute(expression());
         }
    
     }
@@ -637,12 +649,22 @@ Noeud* Interpreteur::instEcrire(){
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
         m_lecteur.avancer();
     }
-    //temporaire
-    return nullptr;
+	
+
+		//assurance de ne pas envoyer un noeud incomplet
+			if(m_nb_erreur > 0){
+					noeudEcrire = nullptr;
+			}
+
+		return noeudEcrire; // Et on renvoie un noeud Instruction Ecrire
 }
 Noeud* Interpreteur::instLire(){
+	
+		Noeud* noeudLire = new NoeudInstLire();
+	
     try{
-    testerEtAvancer("lire");
+			cout << "lire" << endl;
+			testerEtAvancer("lire");
     }catch(SyntaxeException & e){
         m_nb_erreur++;
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
@@ -658,7 +680,7 @@ Noeud* Interpreteur::instLire(){
     
     try{
     if (m_lecteur.getSymbole() == "<VARIABLE>") {
-        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // on ajoute la variable à la table
+         noeudLire->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()) ); // on ajoute la variable à la table
         m_lecteur.avancer();
     }
     }catch(SyntaxeException & e){
@@ -672,10 +694,9 @@ Noeud* Interpreteur::instLire(){
         m_lecteur.avancer();
         
         if(m_lecteur.getSymbole() == "<VARIABLE>"){
-        Noeud* var = m_table.chercheAjoute(m_lecteur.getSymbole()); // La variable est ajoutée à la table et on la mémorise
+        noeudLire->ajoute(m_table.chercheAjoute(m_lecteur.getSymbole()) ); // La variable est ajoutée à la table et on la mémorise
         m_lecteur.avancer();
-        cout << m_lecteur.getSymbole();
-        }   
+        }
     }
     }catch(SyntaxeException & e){
         m_nb_erreur++;
@@ -689,6 +710,31 @@ Noeud* Interpreteur::instLire(){
         cout << "Erreur de syntaxe"<< m_nb_erreur <<" : " << e.what() << endl;
         m_lecteur.avancer();
     }
-    //temporaire
-    return nullptr;
+		
+    //assurance de ne pas envoyer un noeud incomplet
+			if(m_nb_erreur > 0){
+					noeudLire = nullptr;
+			}
+
+		return noeudLire; // Et on renvoie un noeud Instruction Ecrire
+}
+
+void Interpreteur::traduitEnCPP(ostream & cout, unsigned int indentation) const {
+	cout <<"int main() {" << endl; //Début du programme en c++
+	
+	//Je récupère chaque éléments de la table des symboles, et si c'est une variable je l'initialise.
+	for(int i=0; i< this->getTable().getTaille(); i++ ) {
+		SymboleValue temp = this->getTable()[i];
+		
+		//Test si c'est une variable
+		if(temp == "<VARIABLE>") {
+			cout << setw(indentation) << "" << "int " << temp.getChaine() << ";" << endl;
+		}
+	}
+	cout << endl;
+	
+	getArbre()->traduitEnCPP(cout, 2+indentation);
+	
+	cout << endl << setw(1*indentation)	<< "" <<"return 0;" << endl;
+	cout << "}" << endl; //Fin du programme en c++	
 }

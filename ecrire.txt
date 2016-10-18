@@ -2,7 +2,9 @@
 # Les lignes de commentaires commencent par #
 procedure principale()
 
-ecrire(oui,car,2,45, "i =")
+i=4;
+
+ecrire("car ",245, " i =",i)
 
 finproc
 # Commentaire Final
