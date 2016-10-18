@@ -22,6 +22,13 @@ int NoeudSeqInst::executer() {
 void NoeudSeqInst::traduitEnCPP(ostream & cout, unsigned int indentation) const {
   for (int i = 0; i < m_instructions.size(); i++) {
     m_instructions[i]->traduitEnCPP(cout, indentation); // on exécute chaque instruction de la séquence
+		
+		if(typeid(*m_instructions[i]) != typeid(NoeudInstTantQue) && typeid(*m_instructions[i]) != typeid(NoeudInstSi) && typeid(*m_instructions[i]) != typeid(NoeudInstPour)) {
+			cout << ";";
+		}
+		
+		
+		cout <<endl;
 	}
 }
 
@@ -48,7 +55,6 @@ void NoeudAffectation::traduitEnCPP(ostream & cout, unsigned int indentation) co
 	m_variable->traduitEnCPP(cout, indentation);
 	cout << " = ";
 	m_expression->traduitEnCPP(cout,0);
-	cout <<";"<< endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +181,7 @@ void NoeudInstTantQue::traduitEnCPP(ostream & cout, unsigned int indentation) co
 	m_condition->traduitEnCPP(cout,0);
 	cout << ") {" << endl;
 	m_sequence->traduitEnCPP(cout, 2+indentation);
-	cout << setw(indentation) << "" << "}" << endl;
+	cout << setw(indentation) << "" << "}";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -202,7 +208,7 @@ void NoeudInstRepeter::traduitEnCPP(ostream & cout, unsigned int indentation) co
 	m_sequence->traduitEnCPP(cout, 2+indentation);
 	cout <<setw(indentation) <<""<< "}" << "while (";
 	m_condition->traduitEnCPP(cout,0);
-	cout << ");" << endl;
+	cout << ")";
 }
 
 
@@ -238,8 +244,27 @@ int NoeudInstPour::executer() {
 		}
 	}
 	
-	
   return 0; // La valeur renvoyée ne représente rien !
+}
+
+void NoeudInstPour::traduitEnCPP(ostream & cout, unsigned int indentation) const {
+	
+	cout << setw(indentation) << "" << "for(";
+	if(m_affectation1 != nullptr) {
+		m_affectation1->traduitEnCPP(cout,0);
+	}
+	
+	cout << ";";
+	m_condition->traduitEnCPP(cout,0);
+	cout << ";";
+	
+	if(m_affectation2 != nullptr) {
+		m_affectation2->traduitEnCPP(cout,0);
+	}
+	
+	cout <<") {" << endl;
+	m_sequence->traduitEnCPP(cout,indentation+2);
+	cout << setw(indentation) << "" <<  "}";
 }
 
 
@@ -271,6 +296,14 @@ void NoeudInstEcrire::ajoute(Noeud* expression) {
   if (expression!=nullptr) m_expressions.push_back(expression);
 }
 
+void NoeudInstEcrire::traduitEnCPP(ostream & cout, unsigned int indentation) const {
+	
+	cout << setw(indentation) << "" << "cout ";
+	for(Noeud* temp : m_expressions) {
+		cout << "<<";
+		temp->traduitEnCPP(cout,0);
+	}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -296,4 +329,13 @@ int NoeudInstLire::executer() {
 void NoeudInstLire::ajoute(Noeud* variable) {
   if (variable!=nullptr) m_variables.push_back(variable);
 }
+void NoeudInstLire::traduitEnCPP(ostream & cout, unsigned int indentation) const {
+	
+	cout << setw(indentation) << "" << "cin ";
+	for(Noeud* temp : m_variables) {
+		cout << ">>";
+		temp->traduitEnCPP(cout,0);
+	}
+}
+
 

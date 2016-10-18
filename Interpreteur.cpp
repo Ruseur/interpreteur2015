@@ -720,6 +720,9 @@ Noeud* Interpreteur::instLire(){
 }
 
 void Interpreteur::traduitEnCPP(ostream & cout, unsigned int indentation) const {
+	
+	cout <<"#include <iostream>"<< endl;
+	cout <<"using namespace std;" << endl << endl;
 	cout <<"int main() {" << endl; //Début du programme en c++
 	
 	//Je récupère chaque éléments de la table des symboles, et si c'est une variable je l'initialise.
@@ -735,6 +738,6 @@ void Interpreteur::traduitEnCPP(ostream & cout, unsigned int indentation) const 
 	
 	getArbre()->traduitEnCPP(cout, 2+indentation);
 	
-	cout << endl << setw(1*indentation)	<< "" <<"return 0;" << endl;
+	cout << endl<<setw(1*indentation)	<< "" <<"return 0;" << endl;
 	cout << "}" << endl; //Fin du programme en c++	
 }

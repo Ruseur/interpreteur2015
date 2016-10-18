@@ -129,9 +129,7 @@ class NoeudInstPour : public Noeud {
      // Construit une "instruction Pour" avec ses affectations et expression et sa séquence d'instruction
    ~NoeudInstPour() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction Pour : Pour (affectation, expression, affectation) { sequence d'instructions
-    void traduitEnCPP(ostream & cout, unsigned int indentation) const {
-        
-    }
+    void traduitEnCPP(ostream & cout, unsigned int indentation) const;
 
   private:
     Noeud*  m_affectation1;
@@ -150,9 +148,7 @@ class NoeudInstEcrire : public Noeud {
    ~NoeudInstEcrire() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction écrire : écrit la expressions/chaines
     void ajoute(Noeud* expression);  // Ajoute une expression/chaine à la séquence
-    void traduitEnCPP(ostream & cout, unsigned int indentation) const {
-        
-    }
+    void traduitEnCPP(ostream & cout, unsigned int indentation) const;
 
   private:
     vector<Noeud *> m_expressions; // pour stocker les expressions/chaines à écrire
@@ -168,23 +164,11 @@ class NoeudInstLire : public Noeud {
    ~NoeudInstLire() {} // A cause du destructeur virtuel de la classe Noeud
     int executer();  // Exécute l'instruction lire : lire les valeurs et les affectes aux variables associées
     void ajoute(Noeud* variable);  // Ajoute une variable à la séquence
-    void traduitEnCPP(ostream & cout, unsigned int indentation) const {
-        
-    }
+    void traduitEnCPP(ostream & cout, unsigned int indentation) const;
 
   private:
     vector<Noeud *> m_variables; // pour stocker les variables à lire
 };
-
-
-
-
-
-
-
-
-
-
 
 
 #endif /* ARBREABSTRAIT_H */
