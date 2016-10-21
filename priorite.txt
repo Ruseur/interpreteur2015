@@ -1,9 +1,8 @@
-# Fichier de test du tantque
+# Fichier de test des priorites
 # Les lignes de commentaires commencent par #
 procedure principale()
-  i = 12+3;
-tantque
-    j=1;
-fintantque
+
+  i = 10*10*10+10;
+	
 finproc
 # Commentaire Final

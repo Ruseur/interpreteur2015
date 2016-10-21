@@ -5,7 +5,7 @@
 
 		i=0;
 
-		pour(j=0; j<10; j=j+1)
+		pour(; i<10;)
 			i=i+1;
 		finpour
 

@@ -1,0 +1,16 @@
+ # Fichier de test switch
+# Les lignes de commentaires commencent par #
+
+procedure principale()
+
+	i = 5;
+	j = 0;
+
+	switch (i = i+5) {
+		case 5 :
+			j=1;
+		case 4 :
+			j=850;
+	}
+
+finproc

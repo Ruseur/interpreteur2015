@@ -1,0 +1,23 @@
+# Fichier de test
+# Les lignes de commentaires commencent par #
+procedure principale()
+
+	i = 4;
+
+	j = 2;
+
+	si(i<4)
+		i= 50;
+
+	sinonsi(i >= 4)
+
+		si(i==4)
+			i = 2;
+			j = i+5;
+		finsi
+
+	sinon
+		i=0;
+	finsi
+
+finproc

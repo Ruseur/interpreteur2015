@@ -1,9 +1,9 @@
-# Fichier de test du tantque
+# Fichier de test du repeter
 # Les lignes de commentaires commencent par #
 procedure principale()
   i = 12+3;
-tantque
+repeter
+jusqua
     j=1;
-fintantque
 finproc
 # Commentaire Final

@@ -13,7 +13,6 @@
 NoeudSeqInst::NoeudSeqInst() : m_instructions() {
 }
 int NoeudSeqInst::executer() {
-	cout << "executage sequence" << endl;
   for (unsigned int i = 0; i < m_instructions.size(); i++)
     m_instructions[i]->executer(); // on exécute chaque instruction de la séquence
   return 0; // La valeur renvoyée ne représente rien !
@@ -23,11 +22,9 @@ void NoeudSeqInst::traduitEnCPP(ostream & cout, unsigned int indentation) const 
   for (int i = 0; i < m_instructions.size(); i++) {
     m_instructions[i]->traduitEnCPP(cout, indentation); // on exécute chaque instruction de la séquence
 		
-		if(typeid(*m_instructions[i]) != typeid(NoeudInstTantQue) && typeid(*m_instructions[i]) != typeid(NoeudInstSi) && typeid(*m_instructions[i]) != typeid(NoeudInstPour)) {
+		if(typeid(*m_instructions[i]) != typeid(NoeudInstTantQue) && typeid(*m_instructions[i]) != typeid(NoeudInstSi) && typeid(*m_instructions[i]) != typeid(NoeudInstPour) && typeid(*m_instructions[i]) != typeid(NoeudInstSwitch) ) {
 			cout << ";";
 		}
-		
-		
 		cout <<endl;
 	}
 }
@@ -45,7 +42,6 @@ NoeudAffectation::NoeudAffectation(Noeud* variable, Noeud* expression)
 }
 
 int NoeudAffectation::executer() {
-	cout << "executage affectation" << endl;
   int valeur = m_expression->executer(); // On exécute (évalue) l'expression
   ((SymboleValue*) m_variable)->setValeur(valeur); // On affecte la variable
   return 0; // La valeur renvoyée ne représente rien !
@@ -66,7 +62,6 @@ NoeudOperateurBinaire::NoeudOperateurBinaire(Symbole operateur, Noeud* operandeG
 }
 
 int NoeudOperateurBinaire::executer() {
-	cout << "executage operateur binaire" << endl;
   int og, od, valeur;
   if (m_operandeGauche != nullptr) og = m_operandeGauche->executer(); // On évalue l'opérande gauche
   if (m_operandeDroit != nullptr) od = m_operandeDroit->executer(); // On évalue l'opérande droit
@@ -112,7 +107,6 @@ NoeudInstSi::NoeudInstSi(vector<Noeud*> conditions, vector<Noeud*> sequences)
 }
 
 int NoeudInstSi::executer() {
-	cout << "executage si" << endl;
 	
 	int i=0; // indice pour déterminer quel séquence executer
 	bool termine = false; //afin de sortir de la loop en cas de conditions TRUE
@@ -169,7 +163,6 @@ NoeudInstTantQue::NoeudInstTantQue(Noeud* condition, Noeud* sequence)
 }
 
 int NoeudInstTantQue::executer() {
-	cout << "executage tantque" << endl;
 	while(m_condition->executer()) {
 		m_sequence->executer();
 	}
@@ -193,7 +186,6 @@ NoeudInstRepeter::NoeudInstRepeter(Noeud* condition, Noeud* sequence)
 }
 
 int NoeudInstRepeter::executer() {
-	cout << "executage repeter" << endl;
 	do {
 		m_sequence->executer();
 		cout << "coucou" << endl;
@@ -221,7 +213,6 @@ NoeudInstPour::NoeudInstPour(Noeud* affectation1, Noeud* condition, Noeud* affec
 }
 
 int NoeudInstPour::executer() {
-	cout << "executage pour" << endl;
 	
 	if(m_affectation1 == nullptr && m_affectation2 == nullptr) {
 		for( ; m_condition->executer(); ) {
@@ -277,7 +268,6 @@ NoeudInstEcrire::NoeudInstEcrire() {
 
 int NoeudInstEcrire::executer() {
 	
-	cout << "executage ecrire" << endl;
 	for(Noeud* temp : m_expressions) {
 		if( (typeid(*temp) == typeid(SymboleValue) && *((SymboleValue*)temp)== "<CHAINE>")) {
 			string string_temp = ((SymboleValue*)temp)->getChaine();
@@ -314,7 +304,6 @@ NoeudInstLire::NoeudInstLire() {
 }
 
 int NoeudInstLire::executer() {
-	cout << "executage lire" << endl;
 	for(Noeud* temp : m_variables) {
 		int temp2;
 		cout << "Entrez la valeur de la variable " << ((SymboleValue*)temp)->getChaine() << " : ";
@@ -337,5 +326,54 @@ void NoeudInstLire::traduitEnCPP(ostream & cout, unsigned int indentation) const
 		temp->traduitEnCPP(cout,0);
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// NoeudInstSwitch
+////////////////////////////////////////////////////////////////////////////////
+
+NoeudInstSwitch::NoeudInstSwitch(vector<Noeud*> ent, vector<Noeud*> seq, Noeud* var) :
+m_entiers(ent),
+m_sequence(seq),
+m_variable(var) {
+}
+
+
+int NoeudInstSwitch::executer() {
+	bool passe = false;
+	unsigned int i = 0;
+
+	while (i < m_sequence.size() and !passe) {
+		if (i < m_entiers.size() and m_entiers[i]->executer() == m_variable->executer()) {
+			m_sequence[i]->executer();
+			passe = true;
+		} else if (m_sequence.size() > m_entiers.size() and i >= m_entiers.size())
+			m_sequence[i]->executer();
+		i++;
+	}
+
+	return 0;
+}
+
+
+void NoeudInstSwitch::traduitEnCPP(ostream & cout, unsigned int indentation) const {
+	
+		cout << setw(indentation) <<""<< "switch(";
+		m_variable->traduitEnCPP(cout,0);
+		cout << setw(indentation) << ") {" << endl;
+
+		int i=0;
+		while(i< (m_entiers.size())) {
+			cout << setw(indentation) <<""<< "case ";
+			m_entiers[i]->traduitEnCPP(cout,0);
+			cout << " :" << endl;
+			m_sequence[i]->traduitEnCPP(cout, indentation+2);
+			cout << endl;
+			i++;
+		}
+	
+		cout << setw(indentation) <<""<< "}";
+	
+}
+
 
 

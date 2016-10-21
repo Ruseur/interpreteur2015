@@ -71,7 +71,7 @@ class NoeudOperateurBinaire : public Noeud {
     Noeud*  m_operandeDroit;
 };
 
-////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////sinon si Damien ////////////////////////////////////////////////
 class NoeudInstSi : public Noeud {
 // Classe pour représenter un noeud "instruction si"
 //  et ses 2 fils : la condition du si et la séquence d'instruction associée
@@ -88,7 +88,7 @@ class NoeudInstSi : public Noeud {
 };
 
 
-////////////////////////////  Blow  ////////////////////////////////////////////////////
+////////////////////////////  Damien  ////////////////////////////////////////////////////
 class NoeudInstTantQue : public Noeud {
 // Classe pour représenter un noeud "instruction tantque"
 //  et ses 2 fils : la condition du tantque et la séquence d'instruction associée
@@ -104,7 +104,7 @@ class NoeudInstTantQue : public Noeud {
     Noeud*  m_sequence;
 };
 
-////////////////////////////  Blow  ////////////////////////////////////////////////////
+////////////////////////////  Damien  ////////////////////////////////////////////////////
 class NoeudInstRepeter : public Noeud {
 // Classe pour représenter un noeud "instruction Repeter"
 //  et ses 2 fils : la condition du Repeter et la séquence d'instruction associée
@@ -120,7 +120,7 @@ class NoeudInstRepeter : public Noeud {
     Noeud*  m_sequence;
 };
 
-////////////////////////////  Blow  ////////////////////////////////////////////////////
+////////////////////////////  Damien  ////////////////////////////////////////////////////
 class NoeudInstPour : public Noeud {
 // Classe pour représenter un noeud "instruction Pour "
 //  et ses 4 fils : l'affectation, expression, affectation et sa séquence d'instruction associée
@@ -139,7 +139,7 @@ class NoeudInstPour : public Noeud {
 };
 
 
-////////////////////////////  Blow  ////////////////////////////////////////////////////
+////////////////////////////  Damien  ////////////////////////////////////////////////////
 class NoeudInstEcrire : public Noeud {
 // Classe pour représenter un noeud "instruction Ecrire "
 //  et son fils : un tableau d'expression à écrire
@@ -155,7 +155,7 @@ class NoeudInstEcrire : public Noeud {
 };
 
 
-////////////////////////////  Blow  ////////////////////////////////////////////////////
+////////////////////////////  Damien  ////////////////////////////////////////////////////
 class NoeudInstLire : public Noeud {
 // Classe pour représenter un noeud "instruction Lire "
 //  et son fils : un tableau de variable dont on doit lire les valeurs et leurs affecter
@@ -170,5 +170,20 @@ class NoeudInstLire : public Noeud {
     vector<Noeud *> m_variables; // pour stocker les variables à lire
 };
 
+//////////////////////////// Damien /////////////////////////////////////////////////////
+class NoeudInstSwitch : public Noeud {
+    
+  public:
+    NoeudInstSwitch(vector<Noeud*> ent, vector<Noeud*> seq, Noeud* var); // Construit une "instruction Switch" 
+   ~NoeudInstSwitch() {} // A cause du destructeur virtuel de la classe 
+    int executer();  // Exécute l'instruction switch : executer le morceau de code associé à la bonne condition
+    void traduitEnCPP(ostream & cout, unsigned int indentation) const;
+
+  private:
+    vector<Noeud*> m_entiers;
+    vector<Noeud*> m_sequence;
+    Noeud* m_variable; 
+    
+};
 
 #endif /* ARBREABSTRAIT_H */

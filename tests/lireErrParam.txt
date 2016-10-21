@@ -1,9 +1,10 @@
-# Fichier de test du tantque
+# Fichier de test du lire
 # Les lignes de commentaires commencent par #
+
 procedure principale()
-  i = 12+3;
-tantque
-    j=1;
-fintantque
+
+  lire()
+
 finproc
+
 # Commentaire Final

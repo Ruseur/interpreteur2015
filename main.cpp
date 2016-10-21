@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
   try {
     Interpreteur interpreteur(fichier);
     interpreteur.analyse();
+    if(interpreteur.getNbErreur()==0){
     // Si pas d'exception levée, l'analyse syntaxique a réussi
     cout << endl << "================ Syntaxe Correcte" << endl;
     // On affiche le contenu de la table des symboles avant d'exécuter le programme
@@ -28,6 +29,7 @@ int main(int argc, char* argv[]) {
 		ofstream cout("traduction.cpp");
 		int indentation = 2;
 		interpreteur.traduitEnCPP(cout,indentation);
+    }
   } catch (InterpreteurException & e) {
     cout << e.what() << endl;
   }

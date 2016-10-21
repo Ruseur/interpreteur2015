@@ -20,7 +20,8 @@ public:
         void traduitEnCPP(ostream & cout, unsigned int indentation) const; // écrit la base du programme en c++ puis lance la traduction de l'arbre
 
 	inline const TableSymboles & getTable () const  { return m_table;    } // accesseur	
-	inline Noeud* getArbre () const { return m_arbre; }                    // accesseur
+	inline Noeud* getArbre () const { return m_arbre; }                // accesseur
+        int getNbErreur() const { return m_nb_erreur;}
 	
 private:
     Lecteur        m_lecteur;  // Le lecteur de symboles utilisé pour analyser le fichier
@@ -35,8 +36,12 @@ private:
     Noeud*  inst();	       //        <inst> ::= <affectation> ; | <instSi>
     Noeud*  affectation(); // <affectation> ::= <variable> = <expression> 
     Noeud*  expression();  //  <expression> ::= <facteur> { <opBinaire> <facteur> }
+    Noeud*  terme();
     Noeud*  facteur();     //     <facteur> ::= <entier>  |  <variable>  |  - <facteur>  | non <facteur> | ( <expression> )
-                           //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
+    Noeud*  expBool();
+    Noeud*  relationET();
+    Noeud*  relation();
+    //   <opBinaire> ::= + | - | *  | / | < | > | <= | >= | == | != | et | ou
     Noeud*  instSi();      //      <instSi> ::= si ( <expression> ) <seqInst> finsi
     
     
@@ -45,6 +50,7 @@ private:
     Noeud* instPour();
     Noeud* instEcrire();
     Noeud* instLire();
+    Noeud* instSwitch();
 
     // outils pour simplifier l'analyse syntaxique
     void tester (const string & symboleAttendu) const throw (SyntaxeException);   // Si symbole courant != symboleAttendu, on lève une exception

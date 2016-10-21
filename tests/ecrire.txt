@@ -1,9 +1,12 @@
-# Fichier de test du tantque
+# Fichier de test du ecrire
 # Les lignes de commentaires commencent par #
+
 procedure principale()
-  i = 12+3;
-tantque
-    j=1;
-fintantque
+
+  i=4;
+
+  ecrire("car ",245, " i =",i)
+
 finproc
+
 # Commentaire Final
